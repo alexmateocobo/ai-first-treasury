@@ -44,21 +44,25 @@
   .vsep { width:1px; height:22px; background:rgba(255,255,255,.25); margin:0 3px; }
   @keyframes beat { 50% { box-shadow:0 0 0 4px rgba(227,114,34,.35); } }
 
-  /* Process navigation: area captions over one row of chevrons */
-  .procnav { background:#fff; border-bottom:1px solid var(--line); padding:5px 20px 7px; display:grid; grid-template-columns:repeat(10, minmax(0,1fr)); column-gap:4px; row-gap:3px; flex-shrink:0; }
-  .area-h { border:0; border-left:2px solid var(--line-strong); background:none; height:14px; padding:0 0 0 7px; font-size:10.5px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--muted); text-align:left; cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .area-h.on { color:var(--navy); border-left-color:var(--navy); }
-  .chev { --pt:12px; clip-path:polygon(0 0, calc(100% - var(--pt)) 0, 100% 50%, calc(100% - var(--pt)) 100%, 0 100%, var(--pt) 50%);
-    display:flex; align-items:center; justify-content:center; gap:6px; border:0; cursor:pointer; text-align:center; background:#E9EDF1; color:var(--muted);
-    height:32px; font-size:12.5px; line-height:1.1; padding:0 calc(var(--pt) + 4px) 0 calc(var(--pt) + 8px); transition:background .15s, color .15s; }
-  .chev.first { clip-path:polygon(0 0, calc(100% - var(--pt)) 0, 100% 50%, calc(100% - var(--pt)) 100%, 0 100%); padding-left:12px; }
-  .chev .n { font-size:10.5px; font-weight:700; opacity:.7; }
-  .chev:not(.last) { margin-right:calc(-1 * var(--pt)); }
-  .chev:hover { background:#DDE3E9; }
-  .chev.on { background:var(--navy); color:#fff; }
-  .chev.on:hover { background:#0E3260; }
+  /* Process navigation: two rows of chevrons, same height, same 4px spacing in both directions.
+     One shared label size (--nf) is computed in fitNav() so the longest label stays on one line. */
+  .procnav { --nh:30px; --pt:12px; background:#fff; border-bottom:1px solid var(--line); padding:6px 20px 8px; display:grid; grid-template-columns:repeat(10, minmax(0,1fr)); gap:4px; flex-shrink:0; }
+  .area-h, .chev { clip-path:polygon(0 0, calc(100% - var(--pt)) 0, 100% 50%, calc(100% - var(--pt)) 100%, 0 100%, var(--pt) 50%);
+    display:flex; align-items:center; justify-content:center; gap:5px; border:0; cursor:pointer; text-align:center; background:#E9EDF1; color:var(--muted);
+    height:var(--nh); white-space:nowrap; overflow:hidden; line-height:1; padding:0 calc(var(--pt) + 2px) 0 calc(var(--pt) + 4px); transition:background .15s, color .15s; }
+  .area-h.first, .chev.first { clip-path:polygon(0 0, calc(100% - var(--pt)) 0, 100% 50%, calc(100% - var(--pt)) 100%, 0 100%); padding-left:10px; }
+  .area-h:not(.last), .chev:not(.last) { margin-right:calc(-1 * var(--pt)); }
+  .area-h { font-size:calc(var(--nf, 12px) - 1px); font-weight:700; letter-spacing:1px; text-transform:uppercase; }
+  .chev { font-size:var(--nf, 12px); }
+  .chev .n { font-size:10px; font-weight:700; opacity:.7; }
+  .chev .t { white-space:nowrap; }
+  .procnav.measure .chev { font-weight:700; }
+  .area-h:hover, .chev:hover { background:#DDE3E9; }
+  .area-h.on, .chev.on { background:var(--navy); color:#fff; }
+  .area-h.on:hover, .chev.on:hover { background:#0E3260; }
   .chev.sel, .chev.sel:hover { background:var(--blue); color:#fff; font-weight:700; }
-  .chev:focus-visible { outline-offset:-3px; }
+  .chev.sel .n { opacity:.9; }
+  .area-h:focus-visible, .chev:focus-visible { outline-offset:-3px; }
 
   /* Stage: diagram on top at full width, three panels below */
   .stage { flex:1; min-height:0; position:relative; display:grid; grid-template-rows:auto minmax(0,1fr); gap:8px; padding:8px 20px 10px; }
@@ -254,10 +258,10 @@
   @media (min-width:1500px) { .top #sub { display:block; } }
   @media (min-width:1700px) and (min-height:950px) {
     .step p { font-size:16px; } .step h2 { font-size:19px; } #log { font-size:14.5px; } .agcard { font-size:14.5px; } .legend { font-size:12.5px; }
-    .chev { height:36px; font-size:13.5px; } .top { min-height:58px; } .top h1 { font-size:21px; }
+    .procnav { --nh:34px; } .top { min-height:58px; } .top h1 { font-size:21px; }
   }
   @media (max-height:760px) {
-    .top { min-height:46px; } .procnav { padding:3px 20px 5px; row-gap:2px; } .chev { height:30px; }
+    .top { min-height:46px; } .procnav { --nh:27px; padding:4px 20px 6px; }
     .stage { padding:6px 20px 8px; gap:6px; } .bottom { gap:6px; grid-template-columns:minmax(0,1.7fr) minmax(0,1fr) minmax(0,1.2fr); } .bottom > .card { padding:8px 14px 9px; }
     .bottom h3 { padding-bottom:5px; margin-bottom:6px; } .step h2 { margin:5px 0 3px; font-size:16px; } .step p { font-size:14px; line-height:1.42; }
     .legend { font-size:11px; padding:3px 6px; margin-top:2px; } .agtabs { margin-bottom:5px; } .ag-head { margin-bottom:3px; }
@@ -267,7 +271,7 @@
   @media (max-width:900px) {
     html, body { height:auto; } body { overflow:auto; display:block; }
     .top { padding:8px 10px; } .controls { flex-wrap:wrap; flex:1 1 100%; min-width:0; } .vsep { display:none; } .top h1 { white-space:normal; }
-    .procnav { display:flex; overflow-x:auto; gap:4px; padding:6px 10px; } .area-h { display:none; } .chev, .chev.first { clip-path:none; margin-right:0 !important; padding:0 10px; flex:0 0 auto; white-space:nowrap; }
+    .procnav { display:flex; overflow-x:auto; gap:4px; padding:6px 10px; } .area-h { display:none; } .chev, .chev.first { clip-path:none; margin-right:0 !important; padding:0 10px; flex:0 0 auto; font-size:12.5px; }
     .stage { display:block; padding:8px 10px; }
     .diagram { align-items:stretch; margin-bottom:8px; } .svgwrap { overflow-x:auto; max-width:100%; } #svg { width:1180px; height:auto; }
     .bottom { grid-template-columns:1fr; } .bottom > .card { max-height:340px; }
@@ -924,7 +928,7 @@ function wrapWords(text, cls, fs, max) {
 // Process navigation: area captions over one row of chevrons
 let ncol = 1, nnum = 0;
 AREAS.forEach(a => {
-  const hb = document.createElement('button'); hb.className = 'area-h'; hb.id = 'area-' + a.id; hb.textContent = a.name;
+  const hb = document.createElement('button'); hb.className = 'area-h' + (ncol === 1 ? ' first' : '') + (ncol + a.procs.length > ALL.length ? ' last' : ''); hb.id = 'area-' + a.id; hb.textContent = a.name;
   hb.style.gridRow = '1'; hb.style.gridColumn = ncol + ' / span ' + a.procs.length;
   hb.onclick = () => pickProc(a.procs[0]); $('areas').appendChild(hb);
   a.procs.forEach(k => {
@@ -932,7 +936,7 @@ AREAS.forEach(a => {
     const b = document.createElement('button'); b.className = 'chev' + (nnum === 1 ? ' first' : '') + (nnum === ALL.length ? ' last' : ''); b.id = 'chev-' + k; b.dataset.area = a.id;
     b.style.gridRow = '2'; b.style.gridColumn = String(ncol++);
     b.title = CFG.processes[k].desc + ' (key ' + (nnum % 10) + ')';
-    b.innerHTML = '<span class="n">' + pad2(nnum) + '</span><span>' + esc(CFG.processes[k].title) + '</span>';
+    b.innerHTML = '<span class="n">' + pad2(nnum) + '</span><span class="t">' + esc(CFG.processes[k].title) + '</span>';
     b.onclick = () => pickProc(k); $('areas').appendChild(b);
   });
 });
@@ -1466,7 +1470,26 @@ function renderSummary() {
 
 // ---------- Fit ----------
 // The diagram takes the full width unless the panels below would drop under a readable height.
+// Column widths follow label length (as in the original strip) so one shared label size can be as large as possible
+function fitNav() {
+  const nav = $('areas'), ncs = getComputedStyle(nav);
+  if (ncs.display !== 'grid') { nav.style.removeProperty('--nf'); nav.style.gridTemplateColumns = ''; return; }
+  const probe = 20, max = window.innerWidth >= 1700 ? 14 : 12.5, pt = parseFloat(ncs.getPropertyValue('--pt')) || 12;
+  nav.style.gridTemplateColumns = ''; nav.classList.add('measure'); nav.style.setProperty('--nf', probe + 'px');
+  const U = [], C = [];
+  ALL.forEach((id, i) => {
+    const b = $('chev-' + id), cs = getComputedStyle(b);
+    U.push(b.querySelector('.t').getBoundingClientRect().width / probe);
+    C.push(b.querySelector('.n').getBoundingClientRect().width + parseFloat(cs.columnGap) + parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight) + 2 - (i < ALL.length - 1 ? pt : 0));
+  });
+  nav.classList.remove('measure');
+  const avail = nav.clientWidth - parseFloat(ncs.paddingLeft) - parseFloat(ncs.paddingRight) - (ALL.length - 1) * (parseFloat(ncs.columnGap) || 4);
+  const nf = Math.max(8, Math.min(max, Math.floor((avail - C.reduce((a, c) => a + c, 0)) / U.reduce((a, u) => a + u, 0) * 10) / 10));
+  nav.style.setProperty('--nf', nf + 'px');
+  nav.style.gridTemplateColumns = U.map((u, i) => 'minmax(0,' + (u * nf + C[i]).toFixed(2) + 'fr)').join(' ');
+}
 function fit() {
+  fitNav();
   if (window.innerWidth <= 900) { svg.style.width = ''; svg.style.height = ''; return; }
   const st = $('stage'), cs = getComputedStyle(st), pf = parseFloat;
   const padX = pf(cs.paddingLeft) + pf(cs.paddingRight), padY = pf(cs.paddingTop) + pf(cs.paddingBottom), gap = pf(cs.rowGap) || 8;
